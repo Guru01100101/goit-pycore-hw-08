@@ -1,4 +1,4 @@
-import json
+import pickle
 from functools import wraps
 from pathlib import Path
 from typing import List, Dict
@@ -6,7 +6,7 @@ from typing import List, Dict
 from cli_bot_classes import AddressBook, Record
 from normalize_phone import normalize_phone
 
-PHONEBOOK_FILE = "phonebook.json"
+PHONEBOOK_FILE = "phonebook.pkl"
 
 
 def load_phonebook(filename=PHONEBOOK_FILE) -> AddressBook:
@@ -19,8 +19,8 @@ def load_phonebook(filename=PHONEBOOK_FILE) -> AddressBook:
     """
     path = Path(filename)
     try:
-        with open(path, "r") as file:
-            return AddressBook(json.load(file))
+        with open(path, "rb") as file:
+            return pickle.load(file)
     except FileNotFoundError:
         return AddressBook()
 
@@ -36,8 +36,8 @@ def save_phonebook(phonebook: AddressBook, filename=PHONEBOOK_FILE) -> None:
         None
     """
     path = Path(filename)
-    with open(path, "w") as file:
-        json.dump(phonebook, file, indent=4)
+    with open(path, "wb") as file:
+        pickle.dump(phonebook, file)
 
 
 def input_error(func):
@@ -289,11 +289,8 @@ def main(phonebook=None):
             print("Invalid command.")
             print("Available commands: hello, add, change, delete, search, show, phone, add-birthday, show-birthday, "
                   "birthdays, close, exit")
-        # finally:
-        #     save_phonebook(phonebook)
+    save_phonebook(phonebook)
 
 
 if __name__ == '__main__':
-    # phonebook = load_phonebook()
     main()
-    # save_phonebook(phonebook)
